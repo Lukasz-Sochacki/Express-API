@@ -16,15 +16,18 @@ app.use(cors());
 // }));
 
 app.get('/testimonials', (req, res) => {
-  res.json(db);
+  res.json(db.testImonials);
 });
 
 app.get('/testimonials/:id', (req, res) => {
-  res.json(db.find((item) => item.id === parseInt(req.params.id)));
+  res.json(db.testImonials.find((item) => item.id === parseInt(req.params.id)));
 });
 
 app.get('/testimonials/random', (req, res) => {
-  res.json(db[Math.floor(Math.random() * db.length)]);
+  if (db.testImonials.length === 0) {
+    return res.status(404).json({ message: 'No testimonials found...' });
+  }
+  res.json(db.testImonials[Math.floor(Math.random() * db.testImonials.length)]);
 });
 
 app.post('/testimonials', (req, res) => {
@@ -40,13 +43,15 @@ app.post('/testimonials', (req, res) => {
     text,
   };
 
-  db.push(newTestImonial);
+  db.testImonials.push(newTestImonial);
   res.json({ message: 'OK - post' });
 });
 
 app.put('/testimonials/:id', (req, res) => {
   const { author, text } = req.body;
-  const testImonial = db.find((item) => item.id === parseInt(req.params.id));
+  const testImonial = db.testImonials.find(
+    (item) => item.id === parseInt(req.params.id),
+  );
 
   if (!testImonial) {
     return res.status(404).json({ message: 'Not found...' });
@@ -58,13 +63,15 @@ app.put('/testimonials/:id', (req, res) => {
 });
 
 app.delete('/testimonials/:id', (req, res) => {
-  const index = db.findIndex((item) => item.id === parseInt(req.params.id));
+  const index = db.testImonials.findIndex(
+    (item) => item.id === parseInt(req.params.id),
+  );
 
   if (index === -1) {
     return res.status(404).json({ message: 'Not found...' });
   }
 
-  db.splice(index, 1);
+  db.testImonials.splice(index, 1);
 
   res.json({ message: 'OK - delete' });
 });
