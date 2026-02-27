@@ -16,11 +16,6 @@ app.use('/api', testImonialRoutes);
 app.use('/api', seatsRoutes);
 app.use('/api', concertRoutes);
 
-// app.use(cors({
-//   "origin": "https://kodilla.com", //origin sets domains that we approve
-//   "methods": "GET,POST", //we allow only GET and POST methods
-// }));
-
 app.use((req, res) => {
   res.status(404).json('404 not found...');
 });
