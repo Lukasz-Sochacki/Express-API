@@ -8,7 +8,7 @@ router.route('/seats').get((req, res) => {
 });
 
 router.route('/seats/:id').get((req, res) => {
-  res.json(db.seats.find((item) => item.id === parseInt(req.params.id)));
+  res.json(db.seats.find((item) => item.id === req.params.id));
 });
 
 router.route('/seats').post((req, res) => {
@@ -35,16 +35,15 @@ router.route('/seats').post((req, res) => {
   };
 
   db.seats.push(newSeat);
+  req.io.emit('seatsUpdated', db.seats);
   res.json({ message: 'OK - post' });
 });
 
 router.route('/seats/:id').put((req, res) => {
   const { day, seat, client, email } = req.body;
-  const seatSimple = db.seat.find(
-    (item) => item.id === parseInt(req.params.id),
-  );
+  const seatSimple = db.seats.find((item) => item.id === req.params.id);
 
-  if (!seatSImple) {
+  if (!seatSimple) {
     return res.status(404).json({ message: 'Not found...' });
   }
 
@@ -56,9 +55,7 @@ router.route('/seats/:id').put((req, res) => {
 });
 
 router.route('/seats/:id').delete((req, res) => {
-  const index = db.seats.findIndex(
-    (item) => item.id === parseInt(req.params.id),
-  );
+  const index = db.seats.findIndex((item) => item.id === req.params.id);
 
   if (index === -1) {
     return res.status(404).json({ message: 'Not found...' });
