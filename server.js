@@ -1,8 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db');
+// const db = require('./db');
 const path = require('path');
 const socket = require('socket.io');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -37,6 +38,18 @@ const concertRoutes = require('./routes/concert.routes');
 app.use('/api', testImonialRoutes);
 app.use('/api', seatsRoutes);
 app.use('/api', concertRoutes);
+
+//connect with database using mongoose
+mongoose.connect('mongodb://0.0.0.0:27017/NewWaveDB', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+const db = mongoose.connection;
+
+db.once('open', () => {
+  console.log('Connected with NewWaveDB database!');
+});
+db.on('error', (err) => console.log('Error' + err));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/client/build/index.html'));

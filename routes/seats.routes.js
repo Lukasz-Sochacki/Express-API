@@ -1,68 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
-const { v4: uuidv4 } = require('uuid');
 
-router.route('/seats').get((req, res) => {
-  res.json(db.seats);
-});
+const SeatController = require('../controllers/seats.controller');
 
-router.route('/seats/:id').get((req, res) => {
-  res.json(db.seats.find((item) => item.id === req.params.id));
-});
-
-router.route('/seats').post((req, res) => {
-  const { day, seat, client, email } = req.body;
-
-  const isSlotTaken = db.seats.some(
-    (item) => item.day === day && item.seat === seat,
-  );
-
-  if (!day || !seat || !client || !email) {
-    return res.status(404).json({ message: 'All paramethers are required...' });
-  }
-
-  if (isSlotTaken) {
-    return res.status(409).json({ message: 'The slot is already taken...' });
-  }
-
-  const newSeat = {
-    id: uuidv4(),
-    day,
-    seat,
-    client,
-    email,
-  };
-
-  db.seats.push(newSeat);
-  req.io.emit('seatsUpdated', db.seats);
-  res.json({ message: 'OK - post' });
-});
-
-router.route('/seats/:id').put((req, res) => {
-  const { day, seat, client, email } = req.body;
-  const seatSimple = db.seats.find((item) => item.id === req.params.id);
-
-  if (!seatSimple) {
-    return res.status(404).json({ message: 'Not found...' });
-  }
-
-  ((seatSimple.day = day),
-    (seatSimple.seat = seat),
-    (seatSimple.client = client),
-    (seatSimple.email = email),
-    res.json({ message: 'OK - put' }));
-});
-
-router.route('/seats/:id').delete((req, res) => {
-  const index = db.seats.findIndex((item) => item.id === req.params.id);
-
-  if (index === -1) {
-    return res.status(404).json({ message: 'Not found...' });
-  }
-
-  db.seats.splice(index, 1);
-  res.json({ message: 'OK - delete' });
-});
+router.get('/seats', SeatController.getAll);
+router.get('/seats/:id', SeatController.getById);
+router.post('/seats', SeatController.post);
+router.put('/seats/:id', SeatController.put);
+router.delete('/seats/:id', SeatController.delete);
 
 module.exports = router;
