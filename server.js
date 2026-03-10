@@ -30,7 +30,7 @@ io.on('connection', () => {
 });
 
 //import routes
-const testImonialRoutes = require('./routes/testImonials.routes');
+const testImonialRoutes = require('./routes/testimonials.routes');
 const seatsRoutes = require('./routes/seats.routes');
 const concertRoutes = require('./routes/concert.routes');
 
@@ -40,10 +40,13 @@ app.use('/api', seatsRoutes);
 app.use('/api', concertRoutes);
 
 //connect with database using mongoose
-mongoose.connect('mongodb://0.0.0.0:27017/NewWaveDB', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(
+  'mongodb+srv://sochacki_luki:kodilla@cluster0.ovq92ek.mongodb.net/NewWaveDB?appName=Cluster0',
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  },
+);
 const db = mongoose.connection;
 
 db.once('open', () => {
