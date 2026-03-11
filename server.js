@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 // const db = require('./db');
@@ -39,9 +40,10 @@ app.use('/api', testImonialRoutes);
 app.use('/api', seatsRoutes);
 app.use('/api', concertRoutes);
 
+console.log('Hasło z ENV:', process.env.DB_PASS);
 //connect with database using mongoose
 mongoose.connect(
-  'mongodb+srv://sochacki_luki:kodilla@cluster0.ovq92ek.mongodb.net/NewWaveDB?appName=Cluster0',
+  `mongodb+srv://sochacki_luki:${process.env.DB_PASS}@cluster0.ovq92ek.mongodb.net/NewWaveDB?appName=Cluster0`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
